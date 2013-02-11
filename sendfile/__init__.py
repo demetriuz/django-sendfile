@@ -32,13 +32,16 @@ def _get_sendfile():
 
 
 
-def sendfile(request, filename, attachment=False, attachment_filename=None, mimetype=None, encoding=None):
+def sendfile(request, filename, attachment=False, attachment_filename=None, attachment_filename_encoding=None, mimetype=None, encoding=None):
     '''
     create a response to send file using backend configured in SENDFILE_BACKEND
 
-    if attachment is True the content-disposition header will be set with either
+    If attachment is True the content-disposition header will be set with either
     the filename given or else the attachment_filename (of specified).  This
     will typically prompt the user to download the file, rather than view it.
+
+    If attachment_filename_ecoding is set, the filename in the
+    content-disposition header will be encoded as per RFC 2184.
 
     If no mimetype or encoding are specified, then they will be guessed via the
     filename (using the standard python mimetypes module)
@@ -59,7 +62,12 @@ def sendfile(request, filename, attachment=False, attachment_filename=None, mime
     response = _sendfile(request, filename, mimetype=mimetype)
     if attachment:
         attachment_filename = attachment_filename or os.path.basename(filename)
-        response['Content-Disposition'] = 'attachment; filename="%s"' % attachment_filename
+        if attachment_filename_encoding:
+            filename_str = "filename*=%s''%s" % \
+                           (attachment_filename_encoding, attachment_filename)
+        else:
+            filename_str = 'filename=%s' % attachment_filename
+        response['Content-Disposition'] = 'attachment; ' + filename_str
 
     response['Content-length'] = os.path.getsize(filename)
     response['Content-Type'] = mimetype
