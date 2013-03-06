@@ -1,4 +1,5 @@
-from distutils.core import setup
+# from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(
     name='django-sendfile',
@@ -13,7 +14,8 @@ setup(
     
     requires=['Django (>=1.4.2)'],
 
-    packages=['sendfile', 'sendfile.backends'],
+    #packages=['sendfile', 'sendfile.backends'],
+    packages=find_packages(),
     package_dir={
         'sendfile': 'sendfile',
         'sendfile.backends': 'sendfile/backends',

@@ -67,7 +67,7 @@ def sendfile(request, filename, attachment=False, attachment_filename=None, atta
                            (attachment_filename_encoding, attachment_filename)
         else:
             filename_str = 'filename=%s' % attachment_filename
-        response['Content-Disposition'] = 'attachment; ' + filename_str
+        response['Content-Disposition'] = 'attachment; ' + filename_str.encode('utf8')
 
     response['Content-length'] = os.path.getsize(filename)
     response['Content-Type'] = mimetype
